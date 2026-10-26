@@ -60,3 +60,55 @@ export const createDevice = async (
     });
   }
 };
+
+
+export const getMyDevice = async (
+  req: AuthRequest,
+  res: Response,
+): Promise<void> => {
+  try {
+    if (!req.user) {
+      res.status(401).json({
+        success: false,
+        message: "Authentication required",
+      });
+      return;
+    }
+
+    const solarSite = await SolarSite.findOne({
+      owner: req.user.userId,
+    });
+
+    if (!solarSite) {
+      res.status(404).json({
+        success: false,
+        message: "No solar site assigned to this user",
+      });
+      return;
+    }
+
+    const device = await Device.findOne({
+      site: solarSite._id,
+    });
+
+    if (!device) {
+      res.status(404).json({
+        success: false,
+        message: "No device found for this solar site",
+      });
+      return;
+    }
+
+    res.status(200).json({
+      success: true,
+      device,
+    });
+  } catch (error) {
+    console.error("Get my device error:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};

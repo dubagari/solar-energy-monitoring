@@ -38,7 +38,6 @@ export const createSolarSite = async (
   }
 };
 
-
 export const updateSolarSiteOwner = async (
   req: AuthRequest,
   res: Response,
@@ -76,6 +75,42 @@ export const updateSolarSiteOwner = async (
     });
   } catch (error) {
     console.error("Update solar site owner error:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
+
+export const getMySolarSite = async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user) {
+      res.status(401).json({
+        success: false,
+        message: "Authentication required",
+      });
+      return;
+    }
+
+    const solarSite = await SolarSite.findOne({
+      owner: req.user.userId,
+    });
+
+    if (!solarSite) {
+      res.status(404).json({
+        success: false,
+        message: "No solar site assigned to this user",
+      });
+      return;
+    }
+
+    res.status(200).json({
+      success: true,
+      solarSite,
+    });
+  } catch (error) {
+    console.error("Get my solar site error:", error);
 
     res.status(500).json({
       success: false,
