@@ -4,11 +4,16 @@ import { protect, adminOnly } from "../middleware/authMiddleware";
 import handleValidation, {
   createSiteRules,
   updateSiteOwnerRules,
+  siteIdRules,
+  updateSiteRules,
 } from "../middleware/validators";
 import {
   createSolarSite,
   updateSolarSiteOwner,
-  getMySolarSite
+  getMySolarSite,
+  getSolarSites,
+  updateSolarSite,
+  deleteSolarSite,
 } from "../controllers/solarSiteController";
 
 const router = Router();
@@ -31,5 +36,23 @@ router.patch(
 );
 router.get("/my", protect, getMySolarSite);
 
+router.get("/", protect, adminOnly, getSolarSites);
+router.patch(
+  "/:id",
+  protect,
+  adminOnly,
+  siteIdRules,
+  updateSiteRules,
+  handleValidation,
+  updateSolarSite,
+);
+router.delete(
+  "/:id",
+  protect,
+  adminOnly,
+  siteIdRules,
+  handleValidation,
+  deleteSolarSite,
+);
 
 export default router;

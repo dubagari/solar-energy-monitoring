@@ -5,6 +5,7 @@ import authRoutes from "./routes/authRoutes";
 import solarSiteRoutes from "./routes/solarSiteRoutes";
 import deviceRoutes from "./routes/deviceRoutes";
 import readingRoutes from "./routes/readingRoutes";
+import userRoutes from "./routes/userRoutes";
 import { notFound, errorHandler } from "./middleware/errorMiddleware";
 
 const app = express();
@@ -33,6 +34,7 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/solar-sites", solarSiteRoutes);
 app.use("/api/v1/devices", deviceRoutes);
 app.use("/api/v1/readings", readingRoutes);
+app.use("/api/v1/users", userRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

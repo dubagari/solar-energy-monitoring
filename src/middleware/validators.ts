@@ -95,4 +95,64 @@ export const createReadingRules = [
     .withMessage("Current must be a non-negative number"),
 ];
 
+export const userIdRules = [
+  param("id")
+    .isMongoId()
+    .withMessage("Invalid user id"),
+];
+
+export const updateUserRules = [
+  body("name")
+    .optional()
+    .trim()
+    .notEmpty()
+    .withMessage("Name cannot be empty"),
+  body("role")
+    .optional()
+    .isIn(["ADMIN", "USER"])
+    .withMessage("Role must be ADMIN or USER"),
+];
+
+export const siteIdRules = [
+  param("id")
+    .isMongoId()
+    .withMessage("Invalid solar site id"),
+];
+
+export const updateSiteRules = [
+  body("name")
+    .optional()
+    .trim()
+    .notEmpty()
+    .withMessage("Name cannot be empty"),
+  body("location")
+    .optional()
+    .trim()
+    .notEmpty()
+    .withMessage("Location cannot be empty"),
+];
+
+export const deviceUpdateIdRules = [
+  param("id")
+    .isMongoId()
+    .withMessage("Invalid device id"),
+];
+
+export const updateDeviceRules = [
+  body("name")
+    .optional()
+    .trim()
+    .notEmpty()
+    .withMessage("Name cannot be empty"),
+  body("isActive")
+    .optional()
+    .isBoolean()
+    .withMessage("isActive must be a boolean")
+    .toBoolean(),
+  body("site")
+    .optional()
+    .isMongoId()
+    .withMessage("Site must be a valid solar site id"),
+];
+
 export default handleValidation;
