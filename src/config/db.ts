@@ -1,4 +1,8 @@
+import dns from "node:dns";
 import mongoose from "mongoose";
+
+// Workaround: some Windows resolvers fail to resolve MongoDB Atlas SRV records.
+dns.setServers(["8.8.8.8", "8.8.4.4"]);
 
 const connectDB = async (): Promise<void> => {
   try {

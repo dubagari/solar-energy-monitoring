@@ -1,6 +1,10 @@
 import { Router } from "express";
 
 import { protect, adminOnly } from "../middleware/authMiddleware";
+import handleValidation, {
+  createSiteRules,
+  updateSiteOwnerRules,
+} from "../middleware/validators";
 import {
   createSolarSite,
   updateSolarSiteOwner,
@@ -9,8 +13,22 @@ import {
 
 const router = Router();
 
-router.post("/", protect, adminOnly, createSolarSite);
-router.patch("/:siteId/owner", protect, adminOnly, updateSolarSiteOwner);
+router.post(
+  "/",
+  protect,
+  adminOnly,
+  createSiteRules,
+  handleValidation,
+  createSolarSite,
+);
+router.patch(
+  "/:siteId/owner",
+  protect,
+  adminOnly,
+  updateSiteOwnerRules,
+  handleValidation,
+  updateSolarSiteOwner,
+);
 router.get("/my", protect, getMySolarSite);
 
 

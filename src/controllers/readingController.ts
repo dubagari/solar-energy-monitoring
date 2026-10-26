@@ -1,4 +1,4 @@
-import { Response } from "express";
+import { Response, NextFunction } from "express";
 import SolarReading from "../models/SolarReading";
 import Device from "../models/Device";
 import { AuthRequest } from "../middleware/authMiddleware";
@@ -6,6 +6,7 @@ import { AuthRequest } from "../middleware/authMiddleware";
 export const createReading = async (
   req: AuthRequest,
   res: Response,
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const { deviceId, voltage, current } = req.body;
@@ -18,15 +19,33 @@ export const createReading = async (
       return;
     }
 
+    const apiKey = req.headers["x-api-key"];
+
+    if (!apiKey || typeof apiKey !== "string") {
+      res.status(401).json({
+        success: false,
+        message: "Device API key is required in the x-api-key header",
+      });
+      return;
+    }
+
     const device = await Device.findOne({
       deviceId,
       isActive: true,
-    });
+    }).select("+apiKey");
 
     if (!device) {
       res.status(404).json({
         success: false,
         message: "Active device not found",
+      });
+      return;
+    }
+
+    if (device.apiKey !== apiKey) {
+      res.status(401).json({
+        success: false,
+        message: "Invalid device API key",
       });
       return;
     }
@@ -47,18 +66,14 @@ export const createReading = async (
       reading,
     });
   } catch (error) {
-    console.error("Create reading error:", error);
-
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-    });
+    next(error);
   }
 };
 
 export const getDeviceReadings = async (
   req: AuthRequest,
   res: Response,
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const { deviceId } = req.params;
@@ -112,11 +127,6 @@ export const getDeviceReadings = async (
       readings,
     });
   } catch (error) {
-    console.error("Get device readings error:", error);
-
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-    });
+    next(error);
   }
 };

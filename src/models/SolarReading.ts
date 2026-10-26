@@ -46,6 +46,8 @@ const solarReadingSchema = new Schema<ISolarReading>(
   },
 );
 
+solarReadingSchema.index({ device: 1, recordedAt: -1 });
+
 const SolarReading = mongoose.model<ISolarReading>(
   "SolarReading",
   solarReadingSchema,
